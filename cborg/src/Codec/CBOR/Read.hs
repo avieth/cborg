@@ -1395,7 +1395,7 @@ isInt64Canonical sz i#
 
 {-# INLINE tryConsumeWord #-}
 tryConsumeWord :: Word8 -> ByteString -> DecodedToken Word
-tryConsumeWord hdr !bs = case word8ToWord hdr of
+tryConsumeWord hdr !bs = case hdr of
   -- Positive integers (type 0)
   0x00 -> DecodedToken 1 0
   0x01 -> DecodedToken 1 1
@@ -1436,7 +1436,7 @@ tryConsumeWord hdr !bs = case word8ToWord hdr of
 
 {-# INLINE tryConsumeNegWord #-}
 tryConsumeNegWord :: Word8 -> ByteString -> DecodedToken Word
-tryConsumeNegWord hdr !bs = case word8ToWord hdr of
+tryConsumeNegWord hdr !bs = case hdr of
   -- Positive integers (type 0)
   0x20 -> DecodedToken 1 0
   0x21 -> DecodedToken 1 1
@@ -1477,7 +1477,7 @@ tryConsumeNegWord hdr !bs = case word8ToWord hdr of
 
 {-# INLINE tryConsumeInt #-}
 tryConsumeInt :: Word8 -> ByteString -> DecodedToken Int
-tryConsumeInt hdr !bs = case word8ToWord hdr of
+tryConsumeInt hdr !bs = case hdr of
   -- Positive integers (type 0)
   0x00 -> DecodedToken 1 0
   0x01 -> DecodedToken 1 1
@@ -1558,7 +1558,7 @@ tryConsumeInt hdr !bs = case word8ToWord hdr of
 
 {-# INLINE tryConsumeInteger #-}
 tryConsumeInteger :: Word8 -> ByteString -> DecodedToken (BigIntToken Integer)
-tryConsumeInteger hdr !bs = case word8ToWord hdr of
+tryConsumeInteger hdr !bs = case hdr of
 
   -- Positive integers (type 0)
   0x00 -> DecodedToken 1 (BigIntToken True 0)
@@ -1653,7 +1653,7 @@ tryConsumeInteger hdr !bs = case word8ToWord hdr of
 
 {-# INLINE tryConsumeBytes #-}
 tryConsumeBytes :: Word8 -> ByteString -> DecodedToken (LongToken ByteString)
-tryConsumeBytes hdr !bs = case word8ToWord hdr of
+tryConsumeBytes hdr !bs = case hdr of
 
   -- Bytes (type 2)
   0x40 -> readBytesSmall 0 bs
@@ -1689,7 +1689,7 @@ tryConsumeBytes hdr !bs = case word8ToWord hdr of
 
 {-# INLINE tryConsumeString #-}
 tryConsumeString :: Word8 -> ByteString -> DecodedToken (LongToken BS.ByteString)
-tryConsumeString hdr !bs = case word8ToWord hdr of
+tryConsumeString hdr !bs = case hdr of
 
   -- Strings (type 3)
   0x60 -> readBytesSmall 0 bs
@@ -1725,7 +1725,7 @@ tryConsumeString hdr !bs = case word8ToWord hdr of
 
 {-# INLINE tryConsumeListLen #-}
 tryConsumeListLen :: Word8 -> ByteString -> DecodedToken Int
-tryConsumeListLen hdr !bs = case word8ToWord hdr of
+tryConsumeListLen hdr !bs = case hdr of
   -- List structures (type 4)
   0x80 -> DecodedToken 1 0
   0x81 -> DecodedToken 1 1
@@ -1768,7 +1768,7 @@ tryConsumeListLen hdr !bs = case word8ToWord hdr of
 
 {-# INLINE tryConsumeMapLen #-}
 tryConsumeMapLen :: Word8 -> ByteString -> DecodedToken Int
-tryConsumeMapLen hdr !bs = case word8ToWord hdr of
+tryConsumeMapLen hdr !bs = case hdr of
   -- Map structures (type 5)
   0xa0 -> DecodedToken 1 0
   0xa1 -> DecodedToken 1 1
@@ -1811,21 +1811,21 @@ tryConsumeMapLen hdr !bs = case word8ToWord hdr of
 
 {-# INLINE tryConsumeListLenIndef #-}
 tryConsumeListLenIndef :: Word8 -> DecodedToken ()
-tryConsumeListLenIndef hdr = case word8ToWord hdr of
+tryConsumeListLenIndef hdr = case hdr of
   0x9f -> DecodedToken 1 ()
   _    -> DecodeFailure
 
 
 {-# INLINE tryConsumeMapLenIndef #-}
 tryConsumeMapLenIndef :: Word8 -> DecodedToken ()
-tryConsumeMapLenIndef hdr = case word8ToWord hdr of
+tryConsumeMapLenIndef hdr = case hdr of
   0xbf -> DecodedToken 1 ()
   _    -> DecodeFailure
 
 
 {-# INLINE tryConsumeListLenOrIndef #-}
 tryConsumeListLenOrIndef :: Word8 -> ByteString -> DecodedToken Int
-tryConsumeListLenOrIndef hdr !bs = case word8ToWord hdr of
+tryConsumeListLenOrIndef hdr !bs = case hdr of
 
   -- List structures (type 4)
   0x80 -> DecodedToken 1 0
@@ -1870,7 +1870,7 @@ tryConsumeListLenOrIndef hdr !bs = case word8ToWord hdr of
 
 {-# INLINE tryConsumeMapLenOrIndef #-}
 tryConsumeMapLenOrIndef :: Word8 -> ByteString -> DecodedToken Int
-tryConsumeMapLenOrIndef hdr !bs = case word8ToWord hdr of
+tryConsumeMapLenOrIndef hdr !bs = case hdr of
 
   -- Map structures (type 5)
   0xa0 -> DecodedToken 1 0
@@ -1915,7 +1915,7 @@ tryConsumeMapLenOrIndef hdr !bs = case word8ToWord hdr of
 
 {-# INLINE tryConsumeTag #-}
 tryConsumeTag :: Word8 -> ByteString -> DecodedToken Word
-tryConsumeTag hdr !bs = case word8ToWord hdr of
+tryConsumeTag hdr !bs = case hdr of
 
   -- Tagged values (type 6)
   0xc0 -> DecodedToken 1 0
@@ -1960,7 +1960,7 @@ tryConsumeTag hdr !bs = case word8ToWord hdr of
 
 #if defined(ARCH_32bit)
 tryConsumeWord64 :: Word8 -> ByteString -> DecodedToken Word64
-tryConsumeWord64 hdr !bs = case word8ToWord hdr of
+tryConsumeWord64 hdr !bs = case hdr of
   -- Positive integers (type 0)
   0x00 -> DecodedToken 1 0
   0x01 -> DecodedToken 1 1
@@ -1994,7 +1994,7 @@ tryConsumeWord64 hdr !bs = case word8ToWord hdr of
 {-# INLINE tryConsumeWord64 #-}
 
 tryConsumeNegWord64 :: Word8 -> ByteString -> DecodedToken Word64
-tryConsumeNegWord64 hdr !bs = case word8ToWord hdr of
+tryConsumeNegWord64 hdr !bs = case hdr of
   -- Positive integers (type 0)
   0x20 -> DecodedToken 1 0
   0x21 -> DecodedToken 1 1
@@ -2028,7 +2028,7 @@ tryConsumeNegWord64 hdr !bs = case word8ToWord hdr of
 {-# INLINE tryConsumeNegWord64 #-}
 
 tryConsumeInt64 :: Word8 -> ByteString -> DecodedToken Int64
-tryConsumeInt64 hdr !bs = case word8ToWord hdr of
+tryConsumeInt64 hdr !bs = case hdr of
   -- Positive integers (type 0)
   0x00 -> DecodedToken 1 0
   0x01 -> DecodedToken 1 1
@@ -2096,7 +2096,7 @@ tryConsumeInt64 hdr !bs = case word8ToWord hdr of
 {-# INLINE tryConsumeInt64 #-}
 
 tryConsumeListLen64 :: Word8 -> ByteString -> DecodedToken Int64
-tryConsumeListLen64 hdr !bs = case word8ToWord hdr of
+tryConsumeListLen64 hdr !bs = case hdr of
   -- List structures (type 4)
   0x80 -> DecodedToken 1 0
   0x81 -> DecodedToken 1 1
@@ -2132,7 +2132,7 @@ tryConsumeListLen64 hdr !bs = case word8ToWord hdr of
 {-# INLINE tryConsumeListLen64 #-}
 
 tryConsumeMapLen64 :: Word8 -> ByteString -> DecodedToken Int64
-tryConsumeMapLen64 hdr !bs = case word8ToWord hdr of
+tryConsumeMapLen64 hdr !bs = case hdr of
   -- Map structures (type 5)
   0xa0 -> DecodedToken 1 0
   0xa1 -> DecodedToken 1 1
@@ -2168,7 +2168,7 @@ tryConsumeMapLen64 hdr !bs = case word8ToWord hdr of
 {-# INLINE tryConsumeMapLen64 #-}
 
 tryConsumeTag64 :: Word8 -> ByteString -> DecodedToken Word64
-tryConsumeTag64 hdr !bs = case word8ToWord hdr of
+tryConsumeTag64 hdr !bs = case hdr of
   -- Tagged values (type 6)
   0xc0 -> DecodedToken 1 0
   0xc1 -> DecodedToken 1 1
@@ -2204,7 +2204,7 @@ tryConsumeTag64 hdr !bs = case word8ToWord hdr of
 
 {-# INLINE tryConsumeFloat #-}
 tryConsumeFloat :: Word8 -> ByteString -> DecodedToken Float
-tryConsumeFloat hdr !bs = case word8ToWord hdr of
+tryConsumeFloat hdr !bs = case hdr of
   0xf9 -> DecodedToken 3 (wordToFloat16 (eatTailWord16 bs))
   0xfa -> DecodedToken 5 (wordToFloat32 (eatTailWord32 bs))
   _    -> DecodeFailure
@@ -2212,7 +2212,7 @@ tryConsumeFloat hdr !bs = case word8ToWord hdr of
 
 {-# INLINE tryConsumeDouble #-}
 tryConsumeDouble :: Word8 -> ByteString -> DecodedToken Double
-tryConsumeDouble hdr !bs = case word8ToWord hdr of
+tryConsumeDouble hdr !bs = case hdr of
   0xf9 -> DecodedToken 3 (float2Double $ wordToFloat16 (eatTailWord16 bs))
   0xfa -> DecodedToken 5 (float2Double $ wordToFloat32 (eatTailWord32 bs))
   0xfb -> DecodedToken 9                (wordToFloat64 (eatTailWord64 bs))
@@ -2221,7 +2221,7 @@ tryConsumeDouble hdr !bs = case word8ToWord hdr of
 
 {-# INLINE tryConsumeBool #-}
 tryConsumeBool :: Word8 -> DecodedToken Bool
-tryConsumeBool hdr = case word8ToWord hdr of
+tryConsumeBool hdr = case hdr of
   0xf4 -> DecodedToken 1 False
   0xf5 -> DecodedToken 1 True
   _    -> DecodeFailure
@@ -2229,7 +2229,7 @@ tryConsumeBool hdr = case word8ToWord hdr of
 
 {-# INLINE tryConsumeSimple #-}
 tryConsumeSimple :: Word8 -> ByteString -> DecodedToken Word
-tryConsumeSimple hdr !bs = case word8ToWord hdr of
+tryConsumeSimple hdr !bs = case hdr of
 
   -- Simple and floats (type 7)
   0xe0 -> DecodedToken 1 0
@@ -2262,28 +2262,28 @@ tryConsumeSimple hdr !bs = case word8ToWord hdr of
 
 {-# INLINE tryConsumeBytesIndef #-}
 tryConsumeBytesIndef :: Word8 -> DecodedToken ()
-tryConsumeBytesIndef hdr = case word8ToWord hdr of
+tryConsumeBytesIndef hdr = case hdr of
   0x5f -> DecodedToken 1 ()
   _    -> DecodeFailure
 
 
 {-# INLINE tryConsumeStringIndef #-}
 tryConsumeStringIndef :: Word8 -> DecodedToken ()
-tryConsumeStringIndef hdr = case word8ToWord hdr of
+tryConsumeStringIndef hdr = case hdr of
   0x7f -> DecodedToken 1 ()
   _    -> DecodeFailure
 
 
 {-# INLINE tryConsumeNull #-}
 tryConsumeNull :: Word8 -> DecodedToken ()
-tryConsumeNull hdr = case word8ToWord hdr of
+tryConsumeNull hdr = case hdr of
   0xf6 -> DecodedToken 1 ()
   _    -> DecodeFailure
 
 
 {-# INLINE tryConsumeBreakOr #-}
 tryConsumeBreakOr :: Word8 -> DecodedToken ()
-tryConsumeBreakOr hdr = case word8ToWord hdr of
+tryConsumeBreakOr hdr = case hdr of
   0xff -> DecodedToken 1 ()
   _    -> DecodeFailure
 
